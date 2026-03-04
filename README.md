@@ -40,7 +40,7 @@ Queremos scrappear una [página web](https://www.scrapethissite.com/pages/forms/
 *  BeautifulSoup funciona para páginas que no cambian dinámicamente [documentación BeautifulSoup](https://tedboy.github.io/bs4_doc/)
 *  Selenium funciona para páginas que cambian dinámicamente (por ejemplo que ejecutan scripts js) [documentación Selenium pagina oficial](https://www.selenium.dev/documentation/) [documentación selenium python](https://selenium-python.readthedocs.io/)
 
---- Hacer Diagrama de VParadigm ---
+------ Hacer Diagrama de VParadigm --------
 Clase abstracta/interface: Scrapper <- Hijas: ScrapperBeautifulSoup y ScrapperSelenium.
 Clase Contexto que es una agregación de la clase Scrapper padre 
 
