@@ -4,9 +4,9 @@
 **HACER MEMORIA EN LATEX** -> [overleaf](https://es.overleaf.com/) (usar main.tex > Some examples to get started > How to include figures) Solamente pueden editar 2 simultáneamente.
                            -> [prism](https://prism.openai.com/) Parece que pueden editar 3 simultáneamente y con chatgpt integrado dentro.
 
-Título en la primera página con los integrantes del grupo
-Índice en la segunda página
-Luego cada ejercicio
+* Título en la primera página con los integrantes del grupo
+* Índice en la segunda página
+* Luego cada ejercicio
 
 ## Práctica 1
 ### Ejercicio 1
@@ -41,6 +41,7 @@ Queremos scrappear una [página web](https://www.scrapethissite.com/pages/forms/
 *  Selenium funciona para páginas que cambian dinámicamente (por ejemplo que ejecutan scripts js) [documentación Selenium pagina oficial](https://www.selenium.dev/documentation/) [documentación selenium python](https://selenium-python.readthedocs.io/)
 
 ------ Hacer Diagrama de VParadigm --------
+
 Clase abstracta/interface: Scrapper <- Hijas: ScrapperBeautifulSoup y ScrapperSelenium.
 Clase Contexto que es una agregación de la clase Scrapper padre 
 
