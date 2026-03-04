@@ -1,5 +1,5 @@
 # DS-Practicas
-Grupo de Pablo De la Torre Roldán, Beatriz Ruz Gómez y Yeray Rodríguez Navas
+**Grupo de Pablo De la Torre Roldán, Beatriz Ruz Gómez y Yeray Rodríguez Navas**
 
 **HACER MEMORIA EN LATEX** -> [overleaf](https://es.overleaf.com/) (usar main.tex > Some examples to get started > How to include figures)
 
