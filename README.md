@@ -37,7 +37,7 @@ Hacer un programa en Python que use una API de [Hugging Face](https://huggingfac
 ### Ejercicio 3
 Queremos scrappear una [página web](https://www.scrapethissite.com/pages/forms/) con las librerías BeautifulSoup y/o Selenium para extraer un .csv. Usaremos el patrón Strategy ()
 
-*  BeautifulSoup funciona para páginas que no cambian dinámicamente [documentación BeautifulSoup](https://tedboy.github.io/bs4_doc/)
+*  BeautifulSoup funciona para páginas que no cambian dinámicamente [documentación BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 *  Selenium funciona para páginas que cambian dinámicamente (por ejemplo que ejecutan scripts js) [documentación Selenium pagina oficial](https://www.selenium.dev/documentation/) [documentación selenium python](https://selenium-python.readthedocs.io/)
 
 ------ Hacer Diagrama de VParadigm --------
