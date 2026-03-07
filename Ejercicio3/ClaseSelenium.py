@@ -2,21 +2,17 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from ClaseScrape import Scrape
 
-driver_location = "/usr/bin/chromedriver"
-binary_location = "/usr/bin/chromium-browser"
-
-options = Options()
-service = Service(executable_path=driver_location)
-
-options.binary_location = binary_location
 
 
 class StrategySelenium(Scrape):
     def scrape(self, numPages):
         datos = []
-    
+
+        options = Options()
+        service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=options)
         driver.implicitly_wait(5)
         
@@ -26,12 +22,14 @@ class StrategySelenium(Scrape):
             driver.get("https://www.scrapethissite.com/pages/forms/?page_num=" + str(i))
 
             for fila in driver.find_elements(By.TAG_NAME, value="tr"):
-                if(i == 1):
+                if(i == 1 and not datos):
                     for columna in fila.find_elements(By.TAG_NAME, value="th"):
                         datos.append(columna.text)
 
                 for columna in fila.find_elements(By.TAG_NAME, value="td"):
                     datos.append(columna.text)
+        
+        print(f"Scraping finalizado. Elementos extraídos: {len(datos)}")
         driver.quit()
 
         return datos
