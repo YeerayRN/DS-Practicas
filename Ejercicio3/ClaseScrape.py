@@ -2,5 +2,5 @@ from abc import ABC, abstractmethod
 
 class Scrape(ABC):
     @abstractmethod
-    def scrape(self):
+    def scrape(self, numPages):
         pass
