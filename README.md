@@ -1,7 +1,7 @@
 # DS-Practicas
 **Grupo de Pablo De la Torre Roldán, Beatriz Ruz Gómez y Yeray Rodríguez Navas**
 
-[**HACER MEMORIA EN LATEX**](https://prism.openai.com/?u=f3c701c3-de80-4180-8970-ba92d603f06d&pg=1&m=main.tex)
+[**HACER MEMORIA EN LATEX**](https://prism.openai.com/?u=28601317-80e9-4603-961a-25cd74cbfabc&pg=1)
 
 * Título en la primera página con los integrantes del grupo
 * Índice en la segunda página
