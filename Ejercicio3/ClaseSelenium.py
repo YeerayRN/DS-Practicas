@@ -2,15 +2,24 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import WebDriverException
 from ClaseScrape import Scrape
+
+driver_location = "/usr/bin/chromedriver"
+binary_location = "/usr/bin/chromium-browser"
+
+options = Options()
+service = Service(executable_path=driver_location)
+
+options.binary_location = binary_location
+
 
 class StrategySelenium(Scrape):
     def scrape(self, numPages):
         datos = []
+    
+        driver = webdriver.Chrome(service=service, options=options)
+        driver.implicitly_wait(5)
         
-
         print("Driver funcionando correctamente")
 
         for i in range(1, numPages+1):
