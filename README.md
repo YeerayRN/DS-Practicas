@@ -1,8 +1,7 @@
 # DS-Practicas
 **Grupo de Pablo De la Torre Roldán, Beatriz Ruz Gómez y Yeray Rodríguez Navas**
 
-**HACER MEMORIA EN LATEX** -> [overleaf](https://es.overleaf.com/) (usar main.tex > Some examples to get started > How to include figures) Solamente pueden editar 2 simultáneamente.
-                           -> [prism](https://prism.openai.com/) Parece que pueden editar 3 simultáneamente y con chatgpt integrado dentro.
+[**HACER MEMORIA EN LATEX**](https://prism.openai.com/?u=f3c701c3-de80-4180-8970-ba92d603f06d&pg=1&m=main.tex&d=7)
 
 * Título en la primera página con los integrantes del grupo
 * Índice en la segunda página
