@@ -1,7 +1,14 @@
+import java.util.Scanner;
+
 public class Cliente{
     public static void main(String[] args){
-        int N = 10;
-        System.out.println("Jugando con " + N + " jugadores.");
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Introduzca el número de jugadores: ");
+
+        int n = input.nextInt();
+
+        System.out.println("Jugando con " + n + " jugadores.");
 
         FactoriaCompetitiva factoriaCompeti = new FactoriaCompetitiva();
         FactoriaCasual factoriaCasual = new FactoriaCasual();
@@ -10,9 +17,12 @@ public class Cliente{
         PartidaCompeti partidaCompeti = factoriaCompeti.crearPartida();
 
 
-        for(int i = 0; i < N; i++){
-            partidaCasual.addJugador(factoriaCasual.crearJugador());
-            partidaCompeti.addJugador(factoriaCompeti.crearJugador());
+        for(int i = 0; i < n; i++){
+            JugadorCasual jugadorCasual = factoriaCasual.crearJugador();
+            JugadorCompeti jugadorCompeti = factoriaCompeti.crearJugador();
+        
+            partidaCasual.addJugador(jugadorCasual);
+            partidaCompeti.addJugador(jugadorCompeti);
         }
 
         Thread hiloCasual = new Thread(partidaCasual);
@@ -20,5 +30,7 @@ public class Cliente{
 
         hiloCasual.start();
         hiloCompeti.start();
+        
+        input.close();
     }
 }
