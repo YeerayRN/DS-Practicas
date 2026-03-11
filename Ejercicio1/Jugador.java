@@ -4,10 +4,6 @@ public abstract class Jugador {
     public Jugador(int id){
         this.id = id;
     }
-    
-    public int getId(){
-        return this.id;
-    }
 }
 
 class JugadorCasual extends Jugador{
