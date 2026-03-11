@@ -31,10 +31,29 @@ Los productos (heredan de Jugador y Partida - clases abstractas o interfaces):
 
 
 ### Ejercicio 2
-Hacer un programa en Python que use una API de [Hugging Face](https://huggingface.co/) para hablar con LLMs
+Hacer un programa en Python que use una API de [Hugging Face](https://huggingface.co/) para hablar con LLMs. Implementarlo con el patrón decorador. 
+
+Se debe configurar el programa con un archivo JSON en e que se especifica los parámetros:
+* texto: texto de entrada original a resumir (en inglés)
+* model_llm: modelo de LLM que se va a usar para la generación del resumen
+* model_translation: modelo de LLM que va a implementar la traducción
+* model_sentiment: modelo de LLM que va a implementar el análisis de sentimientos
+* huggingface_api_token: token de la API de huggingface
+
+Utilizar los modelos de generación de texto:
+* facebook/bart-large-cm
+* Hellsinki-NLP/opus-mt-en-es
+* nlptown/bert-base-multilingual-uncased-sentiment
+
+Para el token de huggingface primero crear una cuenta y luego crearse un nuevo token (marcar las 3 casillas de inference). Documentación de hugging face en api_reference.
+
+------ Hacer Diagrama de VParadigm --------
+Primero hay una clase interfaz (LLM) con el método generate_summary que será implementado por BasicLLM y la clase decorador.
+La base del patrón decorador es el resumen (clase BasicLLM). Las demás funcionalidades son la traducción (TranslationDecorator), el modelo de sentimientos (SentimentDecorator) y cualquier otra que se quiera implementar. Tanto TranslationDecorator como SentimentDecorator son hijas de Decorator.
+ Las demás funcionalidades son la traducción
 
 ### Ejercicio 3
-Queremos scrappear una [página web](https://www.scrapethissite.com/pages/forms/) con las librerías BeautifulSoup y/o Selenium para extraer un .csv. Usaremos el patrón Strategy ()
+Queremos scrappear una [página web](https://www.scrapethissite.com/pages/forms/) con las librerías BeautifulSoup y/o Selenium para extraer un .csv. Usaremos el patrón Strategy
 
 *  BeautifulSoup funciona para páginas que no cambian dinámicamente [documentación BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 *  Selenium funciona para páginas que cambian dinámicamente (por ejemplo que ejecutan scripts js) [documentación Selenium pagina oficial](https://www.selenium.dev/documentation/) [documentación selenium python](https://selenium-python.readthedocs.io/)
@@ -45,5 +64,9 @@ Clase abstracta/interface: Scrapper <- Hijas: ScrapperBeautifulSoup y ScrapperSe
 Clase Contexto que es una agregación de la clase Scrapper padre 
 
 Usar un fichero de python separado para cada clase
+
+
 ### Ejercicio 4
+
+
 ### Ejercicio 5
