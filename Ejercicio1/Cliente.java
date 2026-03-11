@@ -5,17 +5,15 @@ public class Cliente{
         Scanner input = new Scanner(System.in);
 
         System.out.print("Introduzca el número de jugadores: ");
-
         int n = input.nextInt();
-
+        
         System.out.println("Jugando con " + n + " jugadores.");
 
-        FactoriaCompetitiva factoriaCompeti = new FactoriaCompetitiva();
         FactoriaCasual factoriaCasual = new FactoriaCasual();
+        FactoriaCompetitiva factoriaCompeti = new FactoriaCompetitiva();
 
         PartidaCasual partidaCasual = factoriaCasual.crearPartida();
         PartidaCompeti partidaCompeti = factoriaCompeti.crearPartida();
-
 
         for(int i = 0; i < n; i++){
             JugadorCasual jugadorCasual = factoriaCasual.crearJugador();
