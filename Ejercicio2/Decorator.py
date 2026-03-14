@@ -19,7 +19,7 @@ class TranslationDecorator(Decorator):
         if(result.startswith("Error:")):
             return result
         
-        print(f"Traduciend usando el modelo {self.model_translation}")
+        print(f"Traduciendo usando el modelo {self.model_translation}\n")
         payload = {"inputs": result}
         final_result = query_api(payload, self.model_translation, self.token)
 
@@ -37,10 +37,10 @@ class SentimentDecorator(Decorator):
     def generate_summary(self, text: str):
         result = super().generate_summary(text)
 
-        if(result.startswith("Error:")):
+        if(result.startswith("Error:\n")):
             return result
         
-        print(f"Generando analisis de sentimientos con el modelo {self.model_sentiment}")
+        print(f"Generando analisis de sentimientos con el modelo {self.model_sentiment}\n")
 
         payload = {"inputs": result}
         final_result = query_api(payload, self.model_sentiment, self.token)
@@ -48,4 +48,4 @@ class SentimentDecorator(Decorator):
         if(isinstance(final_result, dict) and "error" in final_result):
             return f"Error: {final_result['error']}"
         
-        return final_result[0][0]['label']
+        return f"{result}\n[Sentimiento: {final_result[0][0]['label']}]\n"

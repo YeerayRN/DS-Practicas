@@ -13,7 +13,7 @@ if __name__ == "__main__":
     model_sentiment = config["model_sentiment"]
     token = config["huggingface_api_token"]
 
-    llm = BasicLLM(model_llm, "token123")
+    llm = BasicLLM(model_llm, token)
     resultado1 = llm.generate_summary(texto)
     print(resultado1)
 
