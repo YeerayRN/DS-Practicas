@@ -16,22 +16,19 @@ if __name__ == "__main__":
 
     print(f"\n===========LLM Básico===========\n")
     llm = BasicLLM(model_llm, token)
-    resultado1 = llm.generate_summary(texto)
+    resultado1 = llm.call_hf(texto)
     print(resultado1)
 
     print(f"\n===========LLM con Decorator de Traducción===========\n")
     traduccion = TranslationDecorator(llm, model_translation, token)
-    resultado2 = traduccion.generate_summary(texto)
+    resultado2 = traduccion.call_hf(texto)
     print(resultado2)
 
     print(f"\n===========LLM con Decorator de Sentimiento===========\n")
     sentimiento = SentimentDecorator(llm, model_sentiment, token)
-    resultado3 = sentimiento.generate_summary(texto)
+    resultado3 = sentimiento.call_hf(texto)
     print(resultado3)
 
     print(f"\n===========LLM con Decorator de Traducción y Sentimiento===========\n")
-    resultado4 = SentimentDecorator(TranslationDecorator(llm, model_translation, token), model_sentiment, token).generate_summary(texto)
-    print(resultado4)
-
-    
-    
+    resultado4 = SentimentDecorator(TranslationDecorator(llm, model_translation, token), model_sentiment, token).call_hf(texto)
+    print(resultado4)    
