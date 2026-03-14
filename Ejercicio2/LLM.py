@@ -17,5 +17,5 @@ def query_api(payload: dict, model: str, token: str):
 
 class LLM(ABC):
     @abstractmethod
-    def generate_summary(self, text: str) -> str:
+    def call_hf(self, text: str) -> str:
         pass
