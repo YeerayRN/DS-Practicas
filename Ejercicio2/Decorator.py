@@ -4,8 +4,8 @@ class Decorator(LLM):
     def __init__(self,wrappedllm):
         self.wrappedllm = wrappedllm
 
-    def generate_summary(self, text: str):
-        return self.wrappedllm.generate_summary(text)
+    def call_hf(self, text: str):
+        return self.wrappedllm.call_hf(text)
 
 class TranslationDecorator(Decorator):
     def __init__(self, wrappedllm: LLM, model_translation: str, token: str):
@@ -13,8 +13,8 @@ class TranslationDecorator(Decorator):
         self.model_translation = model_translation
         self.token = token
 
-    def generate_summary(self, text: str):
-        result = super().generate_summary(text)
+    def call_hf(self, text: str):
+        result = super().call_hf(text)
 
         if(result.startswith("Error:")):
             return result
@@ -34,8 +34,8 @@ class SentimentDecorator(Decorator):
         self.model_sentiment = model_sentiment
         self.token = token
 
-    def generate_summary(self, text: str):
-        result = super().generate_summary(text)
+    def call_hf(self, text: str):
+        result = super().call_hf(text)
 
         if(result.startswith("Error:\n")):
             return result
