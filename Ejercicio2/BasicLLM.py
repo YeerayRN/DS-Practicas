@@ -6,7 +6,7 @@ class BasicLLM(LLM):
         self.token = token
 
     def generate_summary(self, text: str) -> str:
-        print(f"Generating summary for '{text}' using model {self.model}\n")
+        print(f"Generating summary using model {self.model}\n")
         payload = {"inputs": text}
         response = query_api(payload, self.model, self.token)
         
