@@ -1,0 +1,1 @@
+Credenciales = Struct.new(:correo, :password)
