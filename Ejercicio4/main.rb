@@ -1,4 +1,3 @@
-require_relative 'client'
 require_relative 'filterManager'
 require_relative 'filter'
 require_relative 'target'
@@ -18,9 +17,6 @@ manager.add_filter(PwLengthFilter.new)
 manager.add_filter(PwCharactersFilter.new)
 manager.add_filter(PwCapsFilter.new)
 
-
-cliente = Cliente.new(manager)
-
 puts "===========Sistema de Autenticación de Correo==========="
 print "Introduzca su correo electrónico: "
 email_input = gets.chomp
@@ -30,4 +26,4 @@ contraseña_input = gets.chomp
 
 credenciales = Credenciales.new(email_input, contraseña_input)
 
-cliente.enviar(credenciales)
+manager.mandar_mensaje(credenciales)
