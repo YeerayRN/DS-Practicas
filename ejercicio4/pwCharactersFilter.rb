@@ -1,10 +1,16 @@
 require_relative 'filter'
 
-class pwCharactersFilter
-  include filter
+class PwCharactersFilter
+  include Filter
 
-  def execute(credenciales)
-    if credenciales.password.count("! # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ { | } ~`")
+  def ejecutar(credenciales)
+    if credenciales.password.count("! # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ { | } ~`") > 0
+      puts "Comprobación de caracteres especiales cumplida"
+      return true
+    else
+      puts "Comprobación de caracteres especiales incorrecta. Por favor, añada algunos a su
+      contraseña"
+      return false
     end
   end
 end

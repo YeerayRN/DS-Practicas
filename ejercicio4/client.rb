@@ -1,5 +1,9 @@
-class cliente
-  def enviar(mensaje, filter_manager)
-    filter_manager.mandar_mensaje(mensaje)
+class Cliente
+  def initialize(filter_manager)
+    @manager = filter_manager
+  end
+
+  def enviar(mensaje)
+    @manager.mandar_mensaje(mensaje)
   end
 end

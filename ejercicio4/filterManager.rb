@@ -1,7 +1,8 @@
-public class filterManager
+require_relative 'filterChain'
+
+class FilterManager
   def initialize(target)
-    @filter_chain = filterChain.new(target)
-    @filter_chain.target = target
+    @filter_chain = FilterChain.new(target)
   end
 
   def add_filter(filter)

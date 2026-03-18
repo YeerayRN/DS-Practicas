@@ -1,4 +1,4 @@
-class filterChain
+class FilterChain
   def initialize(target)
     @filters = []
     @target = target
@@ -13,6 +13,7 @@ class filterChain
   end
 
   def ejecutar(mensaje)
+    cumplimiento = true
     @filters.each do |filter|
       result = filter.ejecutar(mensaje)
 
@@ -21,6 +22,6 @@ class filterChain
         return
       end
     end
-    @target.ejecutar(result)
+    @target.ejecutar(mensaje)
   end
 end

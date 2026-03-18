@@ -1,3 +1,5 @@
-module filter
+module Filter
   def ejecutar(mensaje)
-    raise not implemented error, "Este método debe ser implementado por la subclase"
+    raise NotImplementedError, "Este método debe ser implementado por la subclase"
+  end
+end
