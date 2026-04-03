@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'observer.dart';
-import 'observerPopUp.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,16 +14,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: MyHomePage(title: 'Womp Nigga AI Cheats'),
+      home: const MyHomePage(title: 'Womp Nigga AI Cheats'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title});
   final String title;
-  final Observer observador = ObserverPopUp();
-
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
