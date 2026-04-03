@@ -1,7 +1,7 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class PwCharactersFilter implements Filter {
+class PwCharactersFilter extends Filter {
   static const String _specialCharacters = "!#\$%&'()*+,-./:;<=>?@[\\]^_{|}~`";
 
   @override

@@ -1,7 +1,7 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class PwCapsFilter implements Filter {
+class PwCapsFilter extends Filter {
   static final _regexMayus = RegExp(r'[A-Z]');
   static final _regexMinus = RegExp(r'[a-z]');
 

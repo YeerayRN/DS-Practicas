@@ -1,7 +1,7 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class FilterDomain implements Filter {
+class FilterDomain extends Filter {
   static const List<String> validDomains = ['@gmail.com', '@hotmail.com'];
 
   @override

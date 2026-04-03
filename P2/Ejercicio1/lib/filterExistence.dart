@@ -1,14 +1,12 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class FilterExistence implements Filter{
-  List<String> emails = [];
-
+class FilterExistence extends Filter{
   @override
   bool ejecutar(Credenciales credenciales){    
-    
+    List<String> emails = Filter.getEmails();
+
     if(!emails.contains(credenciales.correo)){
-      emails.add(credenciales.correo);
       return true;
     }
     else{

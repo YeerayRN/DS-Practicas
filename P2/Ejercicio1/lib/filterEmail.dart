@@ -1,7 +1,7 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class FilterEmail implements Filter{
+class FilterEmail extends Filter{
   static const String specialCharacters = "!#\$%&'()*+,-./:;<=>?@[\\]^{|}~`";
 
   @override

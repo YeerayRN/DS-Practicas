@@ -2,6 +2,7 @@ import 'filterChain.dart';
 import 'struct_credenciales.dart';
 import 'target.dart';
 import 'sensorFiltro.dart';
+import 'filter.dart';
 
 class FilterManager {
   late FilterChain _filterChain;
@@ -10,7 +11,7 @@ class FilterManager {
     _filterChain = FilterChain(target, sensor);
   }
 
-  void addFilter(dynamic filter) {
+  void addFilter(Filter filter) {
     _filterChain.addFilter(filter);
   }
 

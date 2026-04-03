@@ -26,10 +26,12 @@ class FilterChain{
 
       if(!result){
         _sensor.setError(_filters[i].msgerror());
+        _sensor.notifyObservers();
         return;
       }
     }
-    
+
+    Filter.addEmail(mensaje.correo);
     _target.ejecutar(mensaje);
   }
 }

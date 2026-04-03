@@ -1,7 +1,7 @@
 import 'filter.dart';
 import 'struct_credenciales.dart';
 
-class PwLengthFilter implements Filter {
+class PwLengthFilter extends Filter {
   static const int _minLength = 10;
   static const int _maxLength = 128;
   String _error = "";

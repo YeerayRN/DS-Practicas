@@ -1,10 +1,26 @@
+import 'package:flutter/material.dart';
 import 'observer.dart';
 
-class ObserverPopUp implements Observer{
+class ObserverPopUp implements Observer {
+  final BuildContext context;
 
-  ObserverPopUp();
+  ObserverPopUp(this.context);
   
-  String update(String mensaje){
+  @override
+  String update(String mensaje) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error de Validación'),
+        content: Text(mensaje),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
     return mensaje;
   }
 }
