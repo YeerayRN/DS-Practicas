@@ -8,7 +8,7 @@ class FilterEmail extends Filter{
   bool ejecutar(Credenciales credenciales){
     String nombre = credenciales.correo.split("@")[0];
 
-    if(credenciales.correo.contains("@") && nombre.isNotEmpty && '@'.allMatches(credenciales.correo).length == 1){
+    if(credenciales.correo.contains("@") && '@'.allMatches(credenciales.correo).length == 1  && nombre.isNotEmpty && !nombre.contains(" ")){
       
       for (int i = 0; i < nombre.length; i++) {
         if (specialCharacters.contains(nombre[i])) {

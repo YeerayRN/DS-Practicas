@@ -2,16 +2,11 @@ import 'filter.dart';
 import 'struct_credenciales.dart';
 
 class PwCharactersFilter extends Filter {
-  static const String _specialCharacters = "!#\$%&'()*+,-./:;<=>?@[\\]^_{|}~`";
+  static final RegExp _specialCharacters = RegExp(r'[!#$%&()*+,\-./\\:;<=>?@\[\]^_{|}~`]');
 
   @override
   bool ejecutar(Credenciales credenciales) {
-    for (int i = 0; i < credenciales.password.length; i++) {
-      if (_specialCharacters.contains(credenciales.password[i])) {
-        return true;
-      }
-    }
-    return false;
+    return _specialCharacters.hasMatch(credenciales.password);
   }
 
   @override

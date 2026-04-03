@@ -32,6 +32,8 @@ class FilterChain{
     }
 
     Filter.addEmail(mensaje.correo);
+    _sensor.setError("CUENTA CREADA. Mira la consola para comprobar las credenciales introducidas");
+    _sensor.notifyObservers();
     _target.ejecutar(mensaje);
   }
 }

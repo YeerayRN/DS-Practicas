@@ -11,7 +11,7 @@ class ObserverPopUp implements Observer {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error de Validación'),
+        title: const Text('Alerta'),
         content: Text(mensaje),
         actions: [
           TextButton(

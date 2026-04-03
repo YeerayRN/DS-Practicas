@@ -2,17 +2,16 @@ import 'filter.dart';
 import 'struct_credenciales.dart';
 
 class FilterDomain extends Filter {
-  static const List<String> validDomains = ['@gmail.com', '@hotmail.com'];
+  static const List<String> validNames = ['@gmail', '@hotmail'];
+  static const List<String> validExtensions = ['.com', '.es'];
 
   @override
   bool ejecutar(Credenciales credenciales) {
+    String patron = r'@(' + validNames.join('|') + r')\.(' + validExtensions.join('|') + r')$';
 
-    for (String domain in validDomains) {
-      if (credenciales.correo.endsWith(domain)) {
-        return true;
-      }
-    }
-    return false;
+    RegExp regex = RegExp(patron);
+
+    return regex.hasMatch(credenciales.correo);
   }
 
   @override
