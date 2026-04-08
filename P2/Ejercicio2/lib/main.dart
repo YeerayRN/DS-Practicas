@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'secret_keeper.dart';
 import 'basic_secret_keeper.dart';
 import 'strong_prompt_decorator.dart';
@@ -7,13 +6,11 @@ import 'keyword_block_decorator.dart';
 import 'length_limit_decorator.dart';
 
 void main() {
-  dotenv.load(fileName: ".env").then((_) {
-  runApp(const GuardianGameApp());
-  });
+  runApp(const MyApp());
 }
 
-class GuardianGameApp extends StatelessWidget {
-  const GuardianGameApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +25,22 @@ class GuardianGameApp extends StatelessWidget {
   }
 }
 
-// ==========================================
-// PANTALLA 1: SELECCIÓN DE DIFICULTAD
-// ==========================================
+// Pantalla 1: Selección de dificultad
 class DifficultySelectionScreen extends StatelessWidget {
   const DifficultySelectionScreen({super.key});
 
-  // ¡AQUÍ OCURRE LA MAGIA DEL PATRÓN DECORATOR!
   SecretKeeper _crearGuardian(String dificultad) {
-    const apiKey = 'TU_API_KEY_AQUI'; // ¡Pon aquí tu clave de Gemini!
+    const apiKey = 'AIzaSyB_RU5MInoygJNhEKrmCQ6gyLeNP05pdfs'; // Clave API de Gemini
     
     // Nivel Base (Fácil)
     SecretKeeper guardian = BasicSecretKeeper("Pera",apiKey);
 
     if (dificultad == 'Medio') {
-      // Nivel Medio: Envolvemos al básico con el rol gruñón
+      // Nivel Medio: Básico envuelto con gruñón
       guardian = StrongPromptDecorator(guardian);
     } 
     else if (dificultad == 'Difícil') {
-      // Nivel Difícil: Envolvemos con todas las capas de seguridad
+      // Nivel Difícil: Todas las capas envueltas
       guardian = StrongPromptDecorator(guardian);
       guardian = KeywordBlockDecorator(guardian);
       guardian = LengthLimitDecorator(guardian);
@@ -58,7 +52,7 @@ class DifficultySelectionScreen extends StatelessWidget {
   void _iniciarJuego(BuildContext context, String dificultad) {
     final guardianConfigurado = _crearGuardian(dificultad);
 
-    // Navegamos a la pantalla de chat pasándole el guardián ya montado
+    // Pantalla de chat con el guardián ya montado
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -102,9 +96,7 @@ class DifficultySelectionScreen extends StatelessWidget {
   }
 }
 
-// ==========================================
-// PANTALLA 2: EL CHAT
-// ==========================================
+// Pantalla 2: El chat
 class ChatScreen extends StatefulWidget {
   final SecretKeeper guardian;
 
@@ -125,16 +117,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _textController.clear();
 
-    // 1. Añadir mensaje del usuario a la lista
     setState(() {
       _mensajes.add({'rol': 'usuario', 'texto': texto});
       _estaPensando = true;
     });
 
-    // 2. Comunicarse con el Guardián (usando el polimorfismo del Decorator)
     final respuesta = await widget.guardian.ask(texto);
 
-    // 3. Añadir respuesta del Guardián a la lista
     setState(() {
       _mensajes.add({'rol': 'guardian', 'texto': respuesta});
       _estaPensando = false;
@@ -147,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(title: const Text('Interrogatorio')),
       body: Column(
         children: [
-          // Área de los mensajes
+          // Mensajes
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),

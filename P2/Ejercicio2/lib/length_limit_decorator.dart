@@ -7,7 +7,7 @@ class LengthLimitDecorator extends SecretKeeperDecorator {
 
   @override
   Future<String> ask(String userMessage) async {
-    final response = await innerKeeper.ask(userMessage);
+    final response = await super.ask(userMessage);
 
     if (response.length > maxLength) {
       return '${response.substring(0, maxLength)}... [El guardián se calla abruptamente]';

@@ -1,6 +1,6 @@
 import 'secret_keeper.dart';
 
-class SecretKeeperDecorator implements SecretKeeper{
+abstract class SecretKeeperDecorator implements SecretKeeper{
 
     final SecretKeeper innerKeeper;
 
