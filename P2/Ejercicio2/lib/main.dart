@@ -30,7 +30,7 @@ class DifficultySelectionScreen extends StatelessWidget {
   const DifficultySelectionScreen({super.key});
 
   SecretKeeper _crearGuardian(String dificultad) {
-    const apiKey = 'AIzaSyB_RU5MInoygJNhEKrmCQ6gyLeNP05pdfs'; // Clave API de Gemini
+    const apiKey = 'API'; // Clave API de Gemini
     
     // Nivel Base (Fácil)
     SecretKeeper guardian = BasicSecretKeeper("Pera",apiKey);
