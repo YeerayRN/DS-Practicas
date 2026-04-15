@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'paquete.dart';
 import 'vuelo.dart';
@@ -17,11 +19,9 @@ class AgenciaViajesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Reservas Vacacionales',
+      title: 'Servicio Turístico',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        useMaterial3: true,
       ),
       home: const GestorPaquetesScreen(),
     );
@@ -43,7 +43,12 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
 
   final TextEditingController _nochesController = TextEditingController(text: '1');
   final TextEditingController _nombrePaqueteController = TextEditingController(text: 'Vacaciones de Verano');
+  final TextEditingController _nombreHotelController = TextEditingController(text: 'Hotel Costa');
 
+  final double PRECIO_BASE_VUELO = 100.0;
+  final double PRECIO_BASE_HOTEL = 50.0;
+
+  int _idVuelo = 0;
   @override
   void dispose() {
     _nochesController.dispose();
@@ -56,7 +61,8 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
         ? TarifaLowcost()
         : TarifaBusiness();
 
-    final nuevoVuelo = Vuelo("VUE-${DateTime.now().millisecond}", 100.0, politica);
+    final nuevoVuelo = Vuelo("VUE-${_idVuelo}", PRECIO_BASE_VUELO, politica);
+    _idVuelo ++;
 
     setState(() {
       miPaquete.servicios.add(nuevoVuelo);
@@ -68,14 +74,16 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
         ? SoloAlojamiento()
         : TodoIncluido();
 
-    int noches = int.tryParse(_nochesController.text) ?? 1;
-    if (noches < 1) noches = 1;
+    final nombreHotel = _nombreHotelController.text;
 
-    final nuevoHotel = Hotel("Hotel Costa", 50.0, noches, politica);
+    int noches = int.tryParse(_nochesController.text) ?? 0;
+    if (noches >= 1) {
+      final nuevoHotel = Hotel(nombreHotel, PRECIO_BASE_HOTEL, noches, politica);
 
-    setState(() {
-      miPaquete.servicios.add(nuevoHotel);
-    });
+      setState(() {
+        miPaquete.servicios.add(nuevoHotel);
+      });
+    }
   }
 
   void _limpiarPaquete() {
@@ -154,7 +162,21 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
                     Row(
                       children: [
                         Expanded(
-                          flex: 3,
+                          flex: 1,
+                          child: TextField(
+                            controller: _nombreHotelController,
+                            keyboardType: TextInputType.text,
+                            decoration: const InputDecoration(
+                              labelText: 'Nombre del hotel',
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 1,
                           child: DropdownButton<String>(
                             value: _politicaHotelSeleccionada,
                             isExpanded: true,
@@ -173,7 +195,7 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: TextField(
                             controller: _nochesController,
                             keyboardType: TextInputType.number,

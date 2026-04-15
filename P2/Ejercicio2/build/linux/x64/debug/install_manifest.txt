@@ -1,0 +1,13 @@
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/ejercicio_2
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/NativeAssetsManifest.json
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/shaders/stretch_effect.frag
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/pablo/Escritorio/UGR/Tercero/DS-Practicas/P2/Ejercicio2/build/linux/x64/debug/bundle/data/flutter_assets/version.json
