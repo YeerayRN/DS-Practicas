@@ -95,3 +95,15 @@ Conectarse a la API de Gemini (gemini-2.5-flash). Tenemos una clave secreta y el
 Crear API de gemini en get api key google ai studio. No usar correo de universidad
 En pubspec.yaml añadir debajo de sdk: flutter google_generative_ai: ^0.4.7
 
+## Práctica 3
+### Ejercicio 1
+#### Pruebas Unitarias
+* **Grupo Políticas de Precio**: Se deben validar los cálculos matemáticos de cada tarifa de vuelo y régimen de hotel de forma aislada. **MUY IMPORTANTE: Hacer getters de las constantes privadas que se necesiten**
+  * TarifaLowCost: comprueba el precio de gestión sumado al precio base.
+  * TarifaBusiness: comprueba el multiplicador interno.
+  * RegimenSoloAlojamiento: comprueba que el número de noches por precio sea correcto.
+  * RegimenTodoIncluido: comprueba el suplemento diario al coste de la estancia.
+
+   
+* **Grupo Jerarquía y Anidamiento**: Comprobación de que el paquete hace la suma correcta de sus hijos (comprobar anidamiento con un paquete dentro de otro).
+* **Grupo Comportamiento Dinámico**: Verificar que al cambiar la política de un vuelo o hotel ya existentes en un paquete, el método getPrecio() del paquete refleja el cambio. 
