@@ -1,30 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:practica3ds/vuelo.dart';
+import 'package:practica3ds/solo_alojar.dart';
+import 'package:practica3ds/lowcost.dart';
+import 'package:practica3ds/business.dart';
 
-import 'package:p_3/main.dart';
+
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Grupo Servicios Individuales', () {
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test("El constructor de Vuelo lanza una excepción ante un precio base negativo", () {
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      final politica = TarifaLowCost();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(
+            () => Vuelo("VUE-001", -2.0, politica),
+        throwsA(isA<ArgumentError>()),
+      );
+
+    });
+
+    test("No se permiten reservas de hoteles de 0 o menos noches", () {
+
+      final politica = SoloAlojamiento();
+
+      expect(
+            () => Hotel("HOT-001", 0, politica),
+        throwsA(isA<ArgumentError>()),
+      );
+
+    });
+
+
+    test("getPrecio de Vuelo delega el cálculo en su política asignada", () {
+
+      final politica1 = TarifaLowCost();
+      final politica2 = TarifaBusiness();
+
+      final precio1 = Vuelo("VUE-001", 50, politica1).getPrecio();
+      final precio2 = Vuelo("VUE-002",50,politica2).getPrecio();
+
+      expect(precio1, isNot(equals(precio2)));
+      );
+
+    });
+
   });
 }
