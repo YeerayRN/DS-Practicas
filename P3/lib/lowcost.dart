@@ -5,4 +5,6 @@ class TarifaLowcost implements PoliticaVuelo {
 
     @override
     double calcular(double base) => base + _gestion;
+
+    double getCosteGestion() => _gestion;
 }

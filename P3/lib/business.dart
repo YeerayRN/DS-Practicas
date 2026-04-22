@@ -5,4 +5,8 @@ class TarifaBusiness implements PoliticaVuelo {
 
     @override
     double calcular(double base) => base * _multiplicador;
+
+    double getMultiplicador(){
+        return _multiplicador;
+    }
 }

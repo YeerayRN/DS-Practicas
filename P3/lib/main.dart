@@ -36,14 +36,14 @@ class GestorPaquetesScreen extends StatefulWidget {
 }
 
 class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
-  final Paquete miPaquete = Paquete("Vacaciones de Verano", []);
+  final Paquete miPaquete = Paquete("Vacaciones de Verano");
 
   String _politicaVueloSeleccionada = 'LowCost';
   String _politicaHotelSeleccionada = 'Solo Alojamiento';
 
   final TextEditingController _nochesController = TextEditingController(text: '1');
   final TextEditingController _nombrePaqueteController = TextEditingController(text: 'Vacaciones de Verano');
-  final TextEditingController _nombreHotelController = TextEditingController(text: 'Hotel Costa');
+  final TextEditingController _nombreHotelController = TextEditingController(text: 'Hotel Sol');
 
   final double PRECIO_BASE_VUELO = 100.0;
   final double PRECIO_BASE_HOTEL = 50.0;
@@ -62,10 +62,10 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
         : TarifaBusiness();
 
     final nuevoVuelo = Vuelo("VUE-${_idVuelo}", PRECIO_BASE_VUELO, politica);
-    _idVuelo ++;
+      _idVuelo ++;
 
     setState(() {
-      miPaquete.servicios.add(nuevoVuelo);
+      miPaquete.addServicio(nuevoVuelo);
     });
   }
 
@@ -81,14 +81,14 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
       final nuevoHotel = Hotel(nombreHotel, PRECIO_BASE_HOTEL, noches, politica);
 
       setState(() {
-        miPaquete.servicios.add(nuevoHotel);
+        miPaquete.addServicio(nuevoHotel);
       });
     }
   }
 
   void _limpiarPaquete() {
     setState(() {
-      miPaquete.servicios.clear();
+      miPaquete.clearServicios();
     });
   }
 
@@ -113,7 +113,7 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  miPaquete.nombre = value.isEmpty ? "Paquete sin nombre" : value;
+                  miPaquete.setNombre(value.isEmpty ? "Paquete sin nombre" : value);
                 });
               },
             ),
@@ -220,25 +220,25 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Contenido del "${miPaquete.nombre}":',
+            Text('Contenido del "${miPaquete.getNombre()}":',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Expanded(
-              child: miPaquete.servicios.isEmpty
+              child: miPaquete.serviciosEmpty()
                   ? const Center(child: Text('El paquete está vacío.'))
                   : ListView.builder(
-                itemCount: miPaquete.servicios.length,
+                itemCount: miPaquete.getNumServicios(),
                 itemBuilder: (context, index) {
-                  final servicio = miPaquete.servicios[index];
+                  final servicio = miPaquete.getServicio(index);
                   String titulo = "";
                   String subtitulo = "";
 
                   if (servicio is Vuelo) {
-                    titulo = "Vuelo: ${servicio.id}";
-                    subtitulo = "Política: ${servicio.politica.runtimeType}";
+                    titulo = "Vuelo: ${servicio.getId()}";
+                    subtitulo = "Política: ${servicio.getPolitica().runtimeType}";
                   } else if (servicio is Hotel) {
-                    titulo = "Hotel: ${servicio.nombre}";
-                    subtitulo = "${servicio.noches} noches - ${servicio.politica.runtimeType}";
+                    titulo = "Hotel: ${servicio.getNombre()}";
+                    subtitulo = "${servicio.getNoches()} noches - ${servicio.getPolitica().runtimeType}";
                   }
 
                   return Card(
@@ -278,7 +278,7 @@ class _GestorPaquetesScreenState extends State<GestorPaquetesScreen> {
                           foregroundColor: Colors.red.shade900,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        onPressed: miPaquete.servicios.isEmpty ? null : _limpiarPaquete,
+                        onPressed: miPaquete.serviciosEmpty()? null : _limpiarPaquete,
                         icon: const Icon(Icons.delete_sweep),
                         label: const Text('Vaciar Paquete', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ),

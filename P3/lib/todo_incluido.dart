@@ -7,4 +7,8 @@ class TodoIncluido implements PoliticaHotel{
   double calcular(double precioNoche, int noches) {
     return (precioNoche + _suplementoDiario) * noches;
   }
+
+  double getSuplementoDiario(){
+    return _suplementoDiario;
+  }
 }
