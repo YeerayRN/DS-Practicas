@@ -5,6 +5,16 @@ App con Backend (Ruby on Rails) y Frontend (FLutter)
 Cuando se termina un programa, toda la información guardada durante la ejecución se pierde. Para que los datos se mantengan al cerrar la aplicación se utiliza una API Restful de Ruby on Rails.
 
 ## Overview
+Se debe hacer una aplicación que englobe todo lo visto en la asignatura hasta ahora
+* Lista de requisitos
+* Diseño de diagrama de clases
+* 2 Patrones de diseño juntos (en el UML)
+* Código
+* Interfaz
+* Pruebas unitarias de la lógica de negocio
+* Pruebas unitarias de integración (para ver si funciona el get, post, update, delete...)
+* No hace falta hacer memoria. Se presentará al profesor
+
 Se utiliza Ruby on Rails para implementar una API Restful con operaciones CRUD. Necesitaremos crear el código necesario para que cuando ocurra una acción en flutter, se guarde en la BD con Ruby on Rails.
 Se utilizará HTTP para comunicar Flutter con Ruby on Rails.
 Ruby on Rails funciona con JSON. Hace falta adaptar el HTTP a JSON (Flutter->Ruby on Rails) y viceversa.  
