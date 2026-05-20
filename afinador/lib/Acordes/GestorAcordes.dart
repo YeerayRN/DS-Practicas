@@ -20,4 +20,8 @@ class GestorAcordes {
   List<Acorde> getAcordes(){
     return _acordes;
   }
+
+  void editAcorde(){
+
+  }
 }

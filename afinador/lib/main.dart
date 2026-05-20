@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:afinador/Afinador/AfinadorBase.dart';
 import 'package:afinador/Afinador/AfinadorFlutterPitchDetection.dart';
 import 'package:afinador/Afinador/AfinadorHPS.dart';
+import 'package:afinador/Afinador/Observador.dart';
+import 'package:afinador/Afinador/datosAfinador.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,59 +34,57 @@ class PantallaAfinador extends StatefulWidget {
   State<PantallaAfinador> createState() => _PantallaAfinadorState();
 }
 
-class _PantallaAfinadorState extends State<PantallaAfinador> {
-  static const _estrategias = ['FlutterPitchDetection', 'HPS'];
+class _PantallaAfinadorState extends State<PantallaAfinador> implements Observador {
+  static const _estrategias = ['FPD (Android)', 'HPS (Android + Linux)'];
   String _currentEstrategia = _estrategias[0];
 
   AfinadorBase _afinador = AfinadorBase(AfinadorFlutterPitchDetection());
 
-  Timer? _timer;
-  String _nota = "";
+  String _nota      = "";
   double _frecuencia = 0.0;
   double _desviacion = 0.0;
-  bool _afinado = false;
-  bool _grabando = false;
+  bool _afinado     = false;
+  bool _grabando    = false;
 
-  void _cambiarEstrategia(String? nueva){
-    if(!(_grabando && nueva == null)){
-      setState(() {
-        _currentEstrategia = nueva ?? _estrategias[0];
-
-        _afinador = AfinadorBase(
-          nueva == _estrategias[1]
-              ? AfinadorHPS()
-              : AfinadorFlutterPitchDetection(),
-        );
-      });
-    }
+  // Implementación del patrón observador
+  @override
+  void update(DatosAfinador datos) {
+    setState(() {
+      _nota       = datos.nota;
+      _frecuencia = datos.frecuencia;
+      _desviacion = datos.desviacion;
+      _afinado    = datos.afinado;
+    });
   }
 
-  void _iniciarAfinador() async{
-    final permisoMicro = await Permission.microphone.request();
+  void _cambiarEstrategia(String? nueva) {
+    if (_grabando) return;
+    setState(() {
+      _currentEstrategia = nueva ?? _estrategias[0];
+      _afinador = AfinadorBase(
+        nueva == _estrategias[1]
+            ? AfinadorHPS()
+            : AfinadorFlutterPitchDetection(),
+      );
+    });
+  }
 
-    if(permisoMicro.isGranted){
+  void _iniciarAfinador() async {
+    final permiso = await Permission.microphone.request();
+
+    if (permiso.isGranted) {
+      _afinador.addObservador(this);
       _afinador.initRec();
       setState(() => _grabando = true);
-
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-        setState(() {
-          _nota       = _afinador.getNota();
-          _frecuencia = _afinador.getFrecuencia();
-          _desviacion = _afinador.getDesviacion();
-          _afinado    = _afinador.isAfinado();
-        });
-      }); //Cambiar esto por patrón observador para evitar polling
-    }
-    else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Se necesita permiso de micrófono')),
+        const SnackBar(content: Text('Se necesita permiso de micrófono')),
       );
     }
   }
 
   void _pararAfinador() {
-    _timer?.cancel();
-    _timer = null;
+    _afinador.removeObservador(this);
     _afinador.endRec();
     setState(() {
       _grabando   = false;
@@ -111,10 +109,8 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Selector de estrategia
             DropdownButton<String>(
               value: _currentEstrategia,
-              // Se deshabilita mientras graba
               onChanged: _grabando ? null : _cambiarEstrategia,
               items: _estrategias
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -136,14 +132,9 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
 
             const SizedBox(height: 30),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _grabando ? _pararAfinador : _iniciarAfinador,
-                  child: Text(_grabando ? 'Parar': 'Iniciar'),
-                ),
-              ],
+            ElevatedButton(
+              onPressed: _grabando ? _pararAfinador : _iniciarAfinador,
+              child: Text(_grabando ? 'Parar' : 'Iniciar'),
             ),
           ],
         ),

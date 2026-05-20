@@ -1,4 +1,5 @@
 import 'package:afinador/Afinador/EstrategiaAfinador.dart';
+import 'package:afinador/Afinador/datosAfinador.dart';
 import 'dart:async';
 import 'package:flutter_pitch_detection/flutter_pitch_detection.dart';
 
@@ -40,18 +41,19 @@ class AfinadorFlutterPitchDetection implements EstrategiaAfinador{
   }
 
   @override
-  void initRec() async{
+  void initRec(void Function(DatosAfinador) onDatos) async{
     if(!this.grabando){
       this.grabando = true;
       await this._detector.startDetection();
 
       this._pitchSubscription = this._detector.onPitchDetected.listen((data) async{
-        this.notaActual = data['noteOctave'] ?? "";
-        this.frecuenciaActual = data['frequency'] ?? 0.0;
-        this.desviacionNotaActual = data['pitchDeviation'] ?? 0.0;
-        this.afinado = data['isOnPitch'] ?? false;
+        onDatos(DatosAfinador(
+          nota:       data['noteOctave']     ?? "",
+          frecuencia: data['frequency']      ?? 0.0,
+          desviacion: data['pitchDeviation'] ?? 0.0,
+          afinado:    data['isOnPitch']      ?? false,
+        ));
       });
-
       print("AfinadorFlutterPitchDetection ha empezado a grabar");
     }
   }
@@ -76,7 +78,6 @@ class AfinadorFlutterPitchDetection implements EstrategiaAfinador{
       }
     }
   }
-
 
   @override
   String getNota(){
@@ -122,6 +123,7 @@ class AfinadorFlutterPitchDetection implements EstrategiaAfinador{
     }
   }
 
+  @override
   void reiniciarDatos(){
     this.notaActual = "";
     this.frecuenciaActual = 0.0;

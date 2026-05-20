@@ -1,5 +1,7 @@
+import 'package:afinador/Afinador/datosAfinador.dart';
+
 abstract class EstrategiaAfinador {
-  void initRec();
+  void initRec(void Function(DatosAfinador) onDatos);
 
   void endRec();
 
@@ -10,4 +12,6 @@ abstract class EstrategiaAfinador {
   double getDesviacion();
 
   bool isAfinado();
+
+  void reiniciarDatos();
 }

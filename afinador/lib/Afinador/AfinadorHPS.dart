@@ -1,8 +1,11 @@
 import 'package:afinador/Afinador/EstrategiaAfinador.dart';
+import 'package:afinador/Afinador/datosAfinador.dart';
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
-//Librerías necesarias para la detección de audio nativo
+
+//Para detección de audio nativo
 import 'package:record/record.dart';
 import 'package:fftea/fftea.dart';
 
@@ -11,7 +14,7 @@ class AfinadorHPS implements EstrategiaAfinador{
   StreamSubscription<Uint8List>? _audioStreamSubscription;
 
   static const int sampleRate = 44100;
-  static const int bufferSize = 8192; // Debe ser potencia de 2 para la FFT
+  static const int bufferSize = 16384; // Debe ser potencia de 2 para la FFT
   final double a4Reference = 440.0;
 
   final List<String> notas = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -26,7 +29,7 @@ class AfinadorHPS implements EstrategiaAfinador{
   AfinadorHPS();
 
   @override
-  void initRec() async{
+  void initRec(void Function(DatosAfinador) onDatos) async{
     if(_grabando) return;
 
     if(await _audioRecorder.hasPermission()) {
@@ -41,13 +44,13 @@ class AfinadorHPS implements EstrategiaAfinador{
       );
 
       _audioStreamSubscription = stream.listen((data) {
-        procesarAudio(data);
+        procesarAudio(data, onDatos);
       });
       print("AfinadorHPS (Multiplataforma) ha empezado a escuchar");
     }
   }
 
-  void procesarAudio(Uint8List data) {
+  void procesarAudio(Uint8List data, void Function(DatosAfinador) onDatos) {
     final bytes = Uint8List.fromList(data);
     Int16List pcmData = bytes.buffer.asInt16List();
 
@@ -102,14 +105,26 @@ class AfinadorHPS implements EstrategiaAfinador{
 
       // 7. Si el pico supera el umbral, calculamos la nota
       if (maxMagnitud > 0.01 && maxIndex > 0) {
-        double freq = maxIndex * sampleRate / bufferSize;
-        _calcularNota(freq);
+        double freq;
+
+        // Interpolación parabólica para refinar la frecuencia sub-bin
+        if (maxIndex > 0 && maxIndex < hpsLength - 1) {
+          double alpha = hps[maxIndex - 1];
+          double beta  = hps[maxIndex];
+          double gamma = hps[maxIndex + 1];
+          double p = 0.5 * (alpha - gamma) / (alpha - 2 * beta + gamma);
+          freq = (maxIndex + p) * sampleRate / bufferSize;
+        } else {
+          freq = maxIndex * sampleRate / bufferSize;
+        }
+
+        _calcularNota(freq, onDatos);
         print("Frecuencia detectada: $freq Hz");
       }
     }
   }
 
-  void _calcularNota(freq){
+  void _calcularNota(freq, void Function(DatosAfinador) onDatos){
     if (freq == 0) return;
 
     double noteNum = 12 * (log(freq / a4Reference) / ln2) + 69;
@@ -117,13 +132,20 @@ class AfinadorHPS implements EstrategiaAfinador{
 
     //Calcular desviación
     _desviacion = (noteNum -  closestNoteNum) * 100;
-    _afinado = _desviacion.abs() < 5.0; //Tolerancia de 5
+    _afinado = _desviacion.abs() < 10.0; //Tolerancia de 10
 
     //Mapear al nombre
     int octave = (closestNoteNum / 12).floor() - 1;
     int noteIndex = closestNoteNum % 12;
     _notaActual = "${notas[noteIndex]}$octave";
     _frecuenciaActual = freq;
+
+    onDatos(DatosAfinador(
+      nota:       "${notas[noteIndex]}$octave",
+      frecuencia: freq,
+      desviacion: _desviacion,
+      afinado:    _afinado,
+    ));
   }
 
   @override
@@ -133,12 +155,13 @@ class AfinadorHPS implements EstrategiaAfinador{
       _audioStreamSubscription = null;
       await _audioRecorder.stop();
       _grabando = false;
-      _reiniciarDatos();
+      reiniciarDatos();
       print("AfinadorHPS ha parado");
     }
   }
 
-  void _reiniciarDatos() {
+  @override
+  void reiniciarDatos() {
     _notaActual = "";
     _frecuenciaActual = 0.0;
     _desviacion = 0.0;
