@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:afinador/Afinador/AfinadorBase.dart';
 import 'package:afinador/Afinador/AfinadorFlutterPitchDetection.dart';
 import 'package:afinador/Afinador/AfinadorHPS.dart';
+import 'package:afinador/Acordes/GestorAcordes.dart';
+import 'package:afinador/pantallaRegistro.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
-
-// Importamos la nueva pantalla y el gestor de base de datos
-import 'package:afinador/pantallaRegistro.dart';
-import 'package:afinador/Acordes/GestorAcordes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,8 +18,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'App DS P4',
+      // Activamos el modo oscuro ajustando el brillo en el ColorScheme
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
       ),
       home: const PantallaAfinador(title: 'Afinador'),
     );
@@ -30,7 +33,6 @@ class MyApp extends StatelessWidget {
 
 class PantallaAfinador extends StatefulWidget {
   const PantallaAfinador({super.key, required this.title});
-
   final String title;
 
   @override
@@ -44,59 +46,60 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
   AfinadorBase _afinador = AfinadorBase(AfinadorFlutterPitchDetection());
 
   Timer? _timer;
-  String _nota = "";
+  String _nota      = "";
   double _frecuencia = 0.0;
   double _desviacion = 0.0;
-  bool _afinado = false;
-  bool _grabando = false;
+  bool _afinado     = false;
+  bool _grabando    = false;
 
-  // --- VARIABLES DE MODO INVITADO Y SESIÓN ---
-  int? _usuarioId; 
-  String _nombreUsuario = "DefaultUser";
-  GestorAcordes? _gestorAcordes; 
+  GestorAcordes? _gestorAcordes;
+  String _nombreUsuario = "Invitado";
+  bool _iniciandoSesion = false;
 
-  // --- NUEVO MÉTODO PARA ABRIR REGISTRO ---
   Future<void> _abrirRegistro() async {
-    // Si el afinador está escuchando, lo paramos para no saturar memoria al cambiar de pantalla
     if (_grabando) _pararAfinador();
 
-    final resultado = await Navigator.push(
+    final String? nombre = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PantallaRegistro()),
+      MaterialPageRoute(builder: (_) => const PantallaRegistro()),
     );
 
-    // Si la pantalla devuelve datos, el registro fue exitoso
-    if (resultado != null && resultado is Map) {
+    if (nombre == null) return; 
+
+    setState(() => _iniciandoSesion = true);
+
+    try {
+      final gestor = GestorAcordes(usuario: nombre);
+      await gestor.iniciarSesion(nombre);
+
       setState(() {
-        _usuarioId = resultado['id'];
-        _nombreUsuario = resultado['nombre'];
-        // Conectamos con la base de datos de Rails instanciando el gestor
-        _gestorAcordes = GestorAcordes(usuario: _nombreUsuario, idUsuario: _usuarioId);
+        _gestorAcordes  = gestor;
+        _nombreUsuario  = nombre;
+        _iniciandoSesion = false;
       });
+    } catch (e) {
+      setState(() => _iniciandoSesion = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al iniciar sesión: $e')),
+      );
     }
   }
 
-  void _cambiarEstrategia(String? nueva){
-    if(!(_grabando && nueva == null)){
-      setState(() {
-        _currentEstrategia = nueva ?? _estrategias[0];
-
-        _afinador = AfinadorBase(
-          nueva == _estrategias[1]
-              ? AfinadorHPS()
-              : AfinadorFlutterPitchDetection(),
-        );
-      });
-    }
+  void _cambiarEstrategia(String? nueva) {
+    if (_grabando) return;
+    setState(() {
+      _currentEstrategia = nueva ?? _estrategias[0];
+      _afinador = AfinadorBase(
+        nueva == _estrategias[1] ? AfinadorHPS() : AfinadorFlutterPitchDetection(),
+      );
+    });
   }
 
-  void _iniciarAfinador() async{
-    final permisoMicro = await Permission.microphone.request();
-
-    if(permisoMicro.isGranted){
+  void _iniciarAfinador() async {
+    final permiso = await Permission.microphone.request();
+    if (permiso.isGranted) {
       _afinador.initRec();
       setState(() => _grabando = true);
-
       _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
         setState(() {
           _nota       = _afinador.getNota();
@@ -104,11 +107,10 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
           _desviacion = _afinador.getDesviacion();
           _afinado    = _afinador.isAfinado();
         });
-      }); 
-    }
-    else{
+      });
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Se necesita permiso de micrófono')),
+        const SnackBar(content: Text('Se necesita permiso de micrófono')),
       );
     }
   }
@@ -136,15 +138,33 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Afinador - $_nombreUsuario'), // Título dinámico
+        title: Text('Afinador - $_nombreUsuario'),
+        // Añadimos un color de fondo contrastado para asegurar visibilidad
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
         actions: [
-          // Solo mostramos el botón si NO está registrado
-          if (_usuarioId == null)
-            TextButton.icon(
-              icon: const Icon(Icons.person_add, color: Colors.white),
-              label: const Text('Registrarse', style: TextStyle(color: Colors.white)),
-              onPressed: _abrirRegistro,
-            ),
+          if (_gestorAcordes == null)
+            _iniciandoSesion
+                ? Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: TextButton.icon(
+                      icon: const Icon(Icons.person_add),
+                      label: const Text(
+                        'Registrarse',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      onPressed: _abrirRegistro,
+                    ),
+                  ),
         ],
       ),
       body: Center(
@@ -167,22 +187,36 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
             Text(
               _afinado ? '✅ Afinado' : '❌ Desafinado',
               style: TextStyle(
-                color: _afinado ? Colors.green : Colors.red,
+                color: _afinado ? Colors.greenAccent : Colors.redAccent,
                 fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
 
             const SizedBox(height: 30),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _grabando ? _pararAfinador : _iniciarAfinador,
-                  child: Text(_grabando ? 'Parar': 'Iniciar'),
-                ),
-              ],
+            ElevatedButton(
+              onPressed: _grabando ? _pararAfinador : _iniciarAfinador,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+              child: Text(
+                _grabando ? 'Parar' : 'Iniciar',
+                style: const TextStyle(fontSize: 18),
+              ),
             ),
+
+            if (_gestorAcordes != null) ...[
+              const SizedBox(height: 30),
+              Text(
+                'Acordes de $_nombreUsuario:',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ..._gestorAcordes!.getAcordes().map(
+                    (a) => Text(a.toString()),
+              ),
+            ],
           ],
         ),
       ),

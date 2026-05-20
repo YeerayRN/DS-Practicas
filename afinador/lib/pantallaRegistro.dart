@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:afinador/Acordes/GestorUsuarios.dart'; // Ajusta la ruta si GestorUsuarios está en otra carpeta
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key});
@@ -9,83 +8,84 @@ class PantallaRegistro extends StatefulWidget {
 }
 
 class _PantallaRegistroState extends State<PantallaRegistro> {
-  final TextEditingController _nombreController = TextEditingController();
-  final GestorUsuarios _gestorUsuarios = GestorUsuarios();
-  
+  final _controller = TextEditingController();
   bool _cargando = false;
+  String? _error;
 
-  void _intentarRegistrar() async {
-    String nombre = _nombreController.text.trim();
-    
+  void _confirmar() {
+    final nombre = _controller.text.trim();
     if (nombre.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, introduce un nombre')),
-      );
+      setState(() => _error = "Introduce un nombre de usuario");
       return;
     }
-
+    
+    // Mostramos el indicador de carga un instante antes de volver
     setState(() => _cargando = true);
+    
+    // Devolvemos el nombre introducido a main.dart
+    Navigator.pop(context, nombre);
+  }
 
-    int? nuevoId = await _gestorUsuarios.registrarUsuario(nombre);
-
-    setState(() => _cargando = false);
-
-    if (nuevoId != null) {
-      // Si tenemos contexto montado, mostramos éxito y cerramos la pantalla
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registro exitoso. ¡Bienvenido!')),
-      );
-
-      // El pop devuelve los datos a la pantalla anterior (Afinador)
-      Navigator.pop(context, {
-        'id': nuevoId,
-        'nombre': nombre
-      });
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al conectar con el servidor')),
-      );
-    }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Registro de Usuario')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.account_circle, size: 80, color: Colors.deepPurple),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _nombreController,
-              decoration: const InputDecoration(
-                labelText: 'Nombre de usuario',
-                border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: const Text('Iniciar sesión'),
+        // Usamos los mismos colores de contraste que en main.dart
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+      body: Center(
+        // SingleChildScrollView evita el error visual si se abre el teclado del móvil
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icono visual para rellenar la pantalla
+              Icon(
+                Icons.account_circle,
+                size: 100,
+                color: Theme.of(context).colorScheme.primary,
               ),
-              enabled: !_cargando,
-            ),
-            const SizedBox(height: 20),
-            _cargando
-                ? const CircularProgressIndicator()
-                : ElevatedButton.icon(
-                    icon: const Icon(Icons.save),
-                    onPressed: _intentarRegistrar,
-                    label: const Text('Crear Usuario'),
-                  ),
-          ],
+              const SizedBox(height: 40),
+              
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  labelText: 'Nombre de usuario',
+                  errorText: _error,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.person),
+                ),
+                onSubmitted: (_) => _confirmar(),
+              ),
+              const SizedBox(height: 30),
+              
+              _cargando
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton.icon(
+                      onPressed: _confirmar,
+                      icon: const Icon(Icons.login),
+                      label: const Text(
+                        'Entrar',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      // Mismo estilo y padding que el botón de main.dart
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nombreController.dispose();
-    super.dispose();
   }
 }
