@@ -75,7 +75,7 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
           _desviacion = _afinador.getDesviacion();
           _afinado    = _afinador.isAfinado();
         });
-      });
+      }); //Cambiar esto por patrón observador para evitar polling
     }
     else{
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,13 +1,12 @@
 import 'package:afinador/Afinador/EstrategiaAfinador.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter_pitch_detection/flutter_pitch_detection.dart';
 
 class AfinadorFlutterPitchDetection implements EstrategiaAfinador{
   static const defaultSampleRate = 44100;
   static const defaultTolerance = 0.6;
   static const defaultPrecision = 0.8;
-  static const defaultBufferSize = 8196;
+  static const defaultBufferSize = 8192;
   static const defaultA4Reference = 440.0;
 
   var _detector = FlutterPitchDetection();
@@ -33,11 +32,11 @@ class AfinadorFlutterPitchDetection implements EstrategiaAfinador{
     this.bufferSize = defaultBufferSize,
     this.a4Reference = defaultA4Reference,
   }){
-    this._detector.setSampleRate(44100);
-    this._detector.setBufferSize(8192);
-    this._detector.setMinPrecision(0.8);
-    this._detector.setToleranceCents(0.6);
-    this._detector.setA4Reference(440.0);
+    this._detector.setSampleRate(sampleRate);
+    this._detector.setBufferSize(bufferSize);
+    this._detector.setMinPrecision(defaultPrecision);
+    this._detector.setToleranceCents(defaultTolerance);
+    this._detector.setA4Reference(defaultA4Reference);
   }
 
   @override
