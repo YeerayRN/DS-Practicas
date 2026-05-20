@@ -1,0 +1,2 @@
+class AcordesController < ApplicationController
+end

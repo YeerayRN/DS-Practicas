@@ -1,0 +1,2 @@
+class Acorde < ApplicationRecord
+end
