@@ -6,8 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 
 // Importamos la nueva pantalla y el gestor de base de datos
-import 'package:afinador/PantallaRegistro.dart'; // Ajusta la ruta si es necesario
-import 'package:afinador/Acordes/GestorAcordes.dart';    // Ajusta la ruta si es necesario
+import 'package:afinador/pantallaRegistro.dart';
+import 'package:afinador/Acordes/GestorAcordes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,7 +71,7 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
         _usuarioId = resultado['id'];
         _nombreUsuario = resultado['nombre'];
         // Conectamos con la base de datos de Rails instanciando el gestor
-        _gestorAcordes = GestorAcordes(_usuarioId!); 
+        _gestorAcordes = GestorAcordes(usuario: _nombreUsuario, idUsuario: _usuarioId);
       });
     }
   }

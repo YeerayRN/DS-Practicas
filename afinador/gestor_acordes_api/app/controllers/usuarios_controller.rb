@@ -8,7 +8,7 @@ class UsuariosController < ApplicationController
     @usuario = Usuario.new(usuario_params)
     
     if @usuario.save
-      render json: @usuario, status: :created
+      render json: { id: @usuario.id, nombre: @usuario.nombre }, status: :created
     else
       render json: @usuario.errors, status: :unprocessable_entity
     end
@@ -17,15 +17,15 @@ class UsuariosController < ApplicationController
   def update
     @usuario = Usuario.find(params[:id])
     
-    if @usuario.update(acorde_params)
-      render json: @usuario
+    if @usuario.update(usuario_params)
+      render json: { id: @usuario.id, nombre: @usuario.nombre }
     else
       render json: @usuario.errors, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @usuario = Acorde.find(params[:id])
+    @usuario = Usuario.find(params[:id])
     
     if @usuario.destroy
       head :ok
