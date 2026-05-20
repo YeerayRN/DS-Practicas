@@ -12,12 +12,12 @@ class GestorAcordes {
   late String apiURLAcordes;
   late String apiURLUsuarios;
 
-  GestorAcordes({this.ip = "10.0.2.2", this.usuario = "DefaultUser", this.idUsuario}) {
+  GestorAcordes({this.ip = "127.0.0.1", this.usuario = "DefaultUser", this.idUsuario}) {
     apiURLAcordes = "http://$ip:3000/acordes";
     apiURLUsuarios = "http://$ip:3000/usuarios";
   }
 
-  /// AR / INICIAR SESIÓN DE USUARIO
+  /// CREAR / INICIAR SESIÓN DE USUARIO
   Future<void> iniciarSesion(String nombreUsuario) async {
     this.usuario = nombreUsuario;
 
@@ -31,11 +31,9 @@ class GestorAcordes {
       }),
     );
 
-    if (response.statusCode == 201) {
-      // Rails ha creado el usuario y nos devuelve sus datos
+    if (response.statusCode == 201 || response.statusCode == 200) {
       final data = jsonDecode(response.body);
       
-      // Capturamos el ID real que la Base de Datos le ha asignado
       this.idUsuario = data['id']; 
       print("Sesión iniciada. ID en BD: $idUsuario");
       

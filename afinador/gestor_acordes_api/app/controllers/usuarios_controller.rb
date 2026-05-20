@@ -5,10 +5,14 @@ class UsuariosController < ApplicationController
   end
 
   def create
-    @usuario = Usuario.new(usuario_params)
+    # find_or_create_by busca un registro con ese nombre exacto.
+    # Si lo encuentra: lo recupera de la BD (Login).
+    # Si NO lo encuentra: lo crea y lo guarda automáticamente (Registro).
+    @usuario = Usuario.find_or_create_by(nombre: usuario_params[:nombre])
     
-    if @usuario.save
-      render json: { id: @usuario.id, nombre: @usuario.nombre }, status: :created
+    if @usuario.persisted?
+      # Devolvemos status :ok (200) para indicar éxito en ambos casos
+      render json: { id: @usuario.id, nombre: @usuario.nombre }, status: :ok
     else
       render json: @usuario.errors, status: :unprocessable_entity
     end
