@@ -79,7 +79,7 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
               TextField(
                 controller: _controllerIp,
                 decoration: InputDecoration(
-                  labelText: 'IP del servidor',
+                  labelText: 'IP del servidor (Déjala en blanco para localhost)',
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.lan),
                 ),
