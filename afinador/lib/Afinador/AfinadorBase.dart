@@ -23,7 +23,7 @@ class AfinadorBase implements Sensores{
   }
 
   void initRec(){
-    this._afinador.initRec(notificar);
+    this._afinador.initRec(notificar);  //Función del callback a la que se llama cando se detecta un acorde
   }
 
   void endRec(){

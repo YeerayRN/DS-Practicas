@@ -66,19 +66,19 @@ class GestorAcordes {
     }
   }
 
-  /// GUARDAR ACORDE (POST)
+  /// Añadir acorde (POST)
   Future<void> agregar(Acorde acorde) async {
     if (idUsuario == null) throw Exception("No hay sesión iniciada");
 
     // Inyectamos el ID del usuario en el objeto antes de enviarlo
-    Map<String, dynamic> data = acorde.toJson();
-    data['usuario_id'] = idUsuario;
+    Map<String, dynamic> datosEnviar = acorde.toJson();
+    datosEnviar['usuario_id'] = idUsuario;
 
     final response = await http.post(
       Uri.parse(apiURLAcordes),
       headers: {'Content-Type': 'application/json'},
       // Envolvemos con la clave 'acorde' para los Strong Parameters
-      body: jsonEncode({'acorde': data}),
+      body: jsonEncode({'acorde': datosEnviar}),
     );
 
     if (response.statusCode == 201) {

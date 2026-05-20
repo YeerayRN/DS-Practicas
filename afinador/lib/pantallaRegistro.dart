@@ -8,27 +8,35 @@ class PantallaRegistro extends StatefulWidget {
 }
 
 class _PantallaRegistroState extends State<PantallaRegistro> {
-  final _controller = TextEditingController();
+  final _controllerNombre = TextEditingController();
+  final _controllerIp = TextEditingController();
   bool _cargando = false;
   String? _error;
 
   void _confirmar() {
-    final nombre = _controller.text.trim();
+    final nombre = _controllerNombre.text.trim();
     if (nombre.isEmpty) {
       setState(() => _error = "Introduce un nombre de usuario");
       return;
     }
-    
+
+    String? ip = _controllerIp.text.trim();
+    if(ip.isEmpty){
+      ip = "127.0.0.1";
+    }
+
+    Map<String, String> data = {"nombre": nombre, "ip": ip};
     // Mostramos el indicador de carga un instante antes de volver
     setState(() => _cargando = true);
     
     // Devolvemos el nombre introducido a main.dart
-    Navigator.pop(context, nombre);
+    Navigator.pop(context, data);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controllerNombre.dispose();
+    _controllerIp.dispose();
     super.dispose();
   }
 
@@ -55,9 +63,9 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 40),
-              
+
               TextField(
-                controller: _controller,
+                controller: _controllerNombre,
                 decoration: InputDecoration(
                   labelText: 'Nombre de usuario',
                   errorText: _error,
@@ -67,9 +75,20 @@ class _PantallaRegistroState extends State<PantallaRegistro> {
                 onSubmitted: (_) => _confirmar(),
               ),
               const SizedBox(height: 30),
+
+              TextField(
+                controller: _controllerIp,
+                decoration: InputDecoration(
+                  labelText: 'IP del servidor',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lan),
+                ),
+                onSubmitted: (_) => _confirmar(),
+              ),
+              const SizedBox(height: 30),
               
-              _cargando
-                  ? const CircularProgressIndicator()
+              _cargando?
+                  const CircularProgressIndicator()
                   : ElevatedButton.icon(
                       onPressed: _confirmar,
                       icon: const Icon(Icons.login),

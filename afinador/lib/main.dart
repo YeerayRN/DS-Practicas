@@ -1,9 +1,11 @@
+import 'package:afinador/Afinador/datosAfinador.dart';
 import 'package:flutter/material.dart';
 import 'package:afinador/Afinador/AfinadorBase.dart';
 import 'package:afinador/Afinador/AfinadorFlutterPitchDetection.dart';
 import 'package:afinador/Afinador/AfinadorHPS.dart';
 import 'package:afinador/Acordes/GestorAcordes.dart';
-import 'package:afinador/Acordes/Acorde.dart'; // Importante importar el modelo
+import 'package:afinador/Acordes/Acorde.dart';
+import 'package:afinador/Afinador/Observador.dart';
 import 'package:afinador/pantallaRegistro.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
@@ -39,13 +41,12 @@ class PantallaAfinador extends StatefulWidget {
   State<PantallaAfinador> createState() => _PantallaAfinadorState();
 }
 
-class _PantallaAfinadorState extends State<PantallaAfinador> {
-  static const _estrategias = ['FlutterPitchDetection', 'HPS'];
+class _PantallaAfinadorState extends State<PantallaAfinador> implements Observador{
+  static const _estrategias = ['FPD (Móvil)', 'HPS (Móvil y PC)'];
   String _currentEstrategia = _estrategias[0];
 
   AfinadorBase _afinador = AfinadorBase(AfinadorFlutterPitchDetection());
 
-  Timer? _timer;
   String _nota      = "";
   double _frecuencia = 0.0;
   double _desviacion = 0.0;
@@ -59,17 +60,18 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
   Future<void> _abrirRegistro() async {
     if (_grabando) _pararAfinador();
 
-    final String? nombre = await Navigator.push(
+    final Map<String, String>? data = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const PantallaRegistro()),
     );
 
-    if (nombre == null) return; 
+    String? nombre = data?['nombre']?? "Invitado";
+    String? ip = data?['ip']?? "127.0.0.1";
 
     setState(() => _iniciandoSesion = true);
 
     try {
-      final gestor = GestorAcordes(usuario: nombre);
+      final gestor = GestorAcordes(usuario: nombre, ip: ip);
       await gestor.iniciarSesion(nombre);
 
       setState(() {
@@ -96,19 +98,22 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
     });
   }
 
+  @override
+  void update(DatosAfinador datos){
+    setState(() {
+      _nota       = datos.nota;
+      _frecuencia = datos.frecuencia;
+      _desviacion = datos.desviacion;
+      _afinado    = datos.afinado;
+    });
+  }
+
   void _iniciarAfinador() async {
     final permiso = await Permission.microphone.request();
     if (permiso.isGranted) {
+      _afinador.addObservador(this);
       _afinador.initRec();
       setState(() => _grabando = true);
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-        setState(() {
-          _nota       = _afinador.getNota();
-          _frecuencia = _afinador.getFrecuencia();
-          _desviacion = _afinador.getDesviacion();
-          _afinado    = _afinador.isAfinado();
-        });
-      });
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,8 +123,7 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
   }
 
   void _pararAfinador() {
-    _timer?.cancel();
-    _timer = null;
+    _afinador.removeObservador(this);
     _afinador.endRec();
     setState(() {
       _grabando   = false;
@@ -130,11 +134,11 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
     });
   }
 
-  // --- NUEVA FUNCIÓN: Cuadro de diálogo para añadir un acorde ---
+  //Cuadro de diálogo para añadir un acorde
   void _mostrarDialogoNuevoAcorde() {
     final nombreCtrl = TextEditingController();
-    // Generamos 6 controladores, uno para cada cuerda, inicializados a -1 (muteada)
-    final cuerdasCtrls = List.generate(6, (_) => TextEditingController(text: "-1"));
+    // Generamos 6 controladores, uno para cada cuerda, inicializados a 0 (suelta)
+    final cuerdasCtrls = List.generate(6, (_) => TextEditingController(text: "0"));
     bool guardando = false;
 
     showDialog(
@@ -228,6 +232,110 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
     );
   }
 
+  void _mostrarDialogoEditarAcorde(Acorde acorde) {
+    final nombreCtrl = TextEditingController(text: acorde.nombre);
+    final cuerdasCtrls = [
+      TextEditingController(text: acorde.cuerda1.toString()),
+      TextEditingController(text: acorde.cuerda2.toString()),
+      TextEditingController(text: acorde.cuerda3.toString()),
+      TextEditingController(text: acorde.cuerda4.toString()),
+      TextEditingController(text: acorde.cuerda5.toString()),
+      TextEditingController(text: acorde.cuerda6.toString()),
+    ];
+    bool guardando = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Editar Acorde'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: nombreCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre del acorde',
+                        prefixIcon: Icon(Icons.music_note),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Trastes (-1 = no suena, 0 = al aire)',
+                        style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: List.generate(6, (index) {
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                            child: TextField(
+                              controller: cuerdasCtrls[index],
+                              keyboardType: const TextInputType.numberWithOptions(signed: true),
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                labelText: 'C${index + 1}',
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: guardando ? null : () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+                guardando
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: () async {
+                    final nombre = nombreCtrl.text.trim();
+                    if (nombre.isEmpty) return;
+
+                    setStateDialog(() => guardando = true);
+
+                    List<int> trastes = cuerdasCtrls
+                        .map((c) => int.tryParse(c.text) ?? -1)
+                        .toList();
+
+                    Acorde editado = Acorde(
+                      nombre,
+                      trastes[0], trastes[1], trastes[2],
+                      trastes[3], trastes[4], trastes[5],
+                    );
+
+                    try {
+                      await _gestorAcordes!.editar(acorde.id!, editado);
+                      if (!mounted) return;
+                      Navigator.pop(context);
+                      setState(() {});
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Acorde actualizado')),
+                      );
+                    } catch (e) {
+                      setStateDialog(() => guardando = false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    }
+                  },
+                  child: const Text('Guardar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
   void _eliminarAcorde(Acorde acorde) async {
     try {
       await _gestorAcordes!.eliminar(acorde);
@@ -356,9 +464,18 @@ class _PantallaAfinadorState extends State<PantallaAfinador> {
                         leading: const CircleAvatar(child: Icon(Icons.queue_music)),
                         title: Text(acorde.nombre, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text('Trastes: [ ${acorde.cuerda1}, ${acorde.cuerda2}, ${acorde.cuerda3}, ${acorde.cuerda4}, ${acorde.cuerda5}, ${acorde.cuerda6} ]'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                          onPressed: () => _eliminarAcorde(acorde),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, color: Colors.blueAccent),
+                              onPressed: () => _mostrarDialogoEditarAcorde(acorde),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                              onPressed: () => _eliminarAcorde(acorde),
+                            ),
+                          ],
                         ),
                       ),
                     );
