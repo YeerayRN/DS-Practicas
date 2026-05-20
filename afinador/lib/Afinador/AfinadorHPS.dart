@@ -50,7 +50,7 @@ class AfinadorHPS implements EstrategiaAfinador{
     Int16List pcmData = Int16List.view(data.buffer);
     if(pcmData.length < bufferSize) return;
 
-    List<double> signal = List<double>.generate(
+      List<double> signal = List<double>.generate(
       bufferSize, (i) => pcmData[i] / 32768.0
     );
 
