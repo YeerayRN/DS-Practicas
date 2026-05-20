@@ -10,5 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_20_095752) do
+  create_table "acordes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "cuerda1"
+    t.integer "cuerda2"
+    t.integer "cuerda3"
+    t.integer "cuerda4"
+    t.integer "cuerda5"
+    t.integer "cuerda6"
+    t.string "nombre"
+    t.datetime "updated_at", null: false
+    t.integer "usuario_id", null: false
+    t.index ["usuario_id"], name: "index_acordes_on_usuario_id"
+  end
+
+  create_table "usuarios", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "nombre"
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "acordes", "usuarios"
 end
