@@ -1,4 +1,5 @@
 class Acorde{
+  int id;
   String nombre = "";
   int cuerda1 = -1; // E4 (la más fina)
   int cuerda2 = -1; // B3 (la 2ª más fina)
@@ -7,22 +8,24 @@ class Acorde{
   int cuerda5 = -1; // A2 (la 2ª más gorda)
   int cuerda6 = -1; // E2 (la más gorda)
 
-  Acorde(this.nombre, this.cuerda1, this.cuerda2, this.cuerda3, this.cuerda4, this.cuerda5, this.cuerda6);
+  Acorde(this.id, this.nombre, this.cuerda1, this.cuerda2, this.cuerda3, this.cuerda4, this.cuerda5, this.cuerda6);
 
   factory Acorde.fromJson(Map<String, dynamic> json){
     return Acorde(
-        json['nombre'] as String,
-        json['cuerda1'] as int,
-        json['cuerda2'] as int,
-        json['cuerda3'] as int,
-        json['cuerda4'] as int,
-        json['cuerda5'] as int,
-        json['cuerda6'] as int
+      json['id'] as int,
+      json['nombre'] as String,
+      json['cuerda1'] as int,
+      json['cuerda2'] as int,
+      json['cuerda3'] as int,
+      json['cuerda4'] as int,
+      json['cuerda5'] as int,
+      json['cuerda6'] as int
     );
   }
 
   Map<String, dynamic> toJson(){
     return {
+      'id' : id,
       'nombre': nombre,
       'cuerda1': cuerda1,
       'cuerda2': cuerda2,

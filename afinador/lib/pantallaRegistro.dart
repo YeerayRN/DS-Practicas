@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:afinador/GestorUsuarios.dart'; // Ajusta la ruta si GestorUsuarios está en otra carpeta
+import 'package:afinador/Acordes/GestorUsuarios.dart'; // Ajusta la ruta si GestorUsuarios está en otra carpeta
 
 class PantallaRegistro extends StatefulWidget {
   const PantallaRegistro({super.key});
